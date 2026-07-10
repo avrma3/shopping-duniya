@@ -417,6 +417,11 @@ async function handleLogin(e) {
         showSuccess(`Welcome back, ${currentUser.firstName || 'there'}!`);
     } catch (error) {
         showError(error.message);
+        // Clear the password field on failure so a stale/incorrect value
+        // (e.g. an old saved browser autofill) doesn't just get resubmitted.
+        const passwordInput = document.getElementById('login-password');
+        passwordInput.value = '';
+        passwordInput.focus();
     }
 }
 
