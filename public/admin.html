@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — Shopping Duniya</title>
+    <link rel="icon" type="image/jpeg" href="logo.jpeg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lexend:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Access denied screen -->
+    <div id="access-denied" class="access-denied" style="display:none;">
+        <div class="access-denied-card">
+            <i class="fas fa-lock"></i>
+            <h2>Admin access required</h2>
+            <p>You need to be logged in with an admin account to view this page.</p>
+            <a href="/index.html" class="btn btn-primary">Back to store</a>
+        </div>
+    </div>
+
+    <div id="admin-app" class="admin-app" style="display:none;">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <span class="brand-mark"><img src="logo.jpeg" alt="Shopping Duniya logo"></span>
+                <span class="brand-name">Shopping Duniya</span>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-view="dashboard"><i class="fas fa-gauge"></i> Dashboard</button>
+                <button class="nav-item" data-view="products"><i class="fas fa-box"></i> Products</button>
+                <button class="nav-item" data-view="orders"><i class="fas fa-receipt"></i> Orders</button>
+                <button class="nav-item" data-view="users"><i class="fas fa-users"></i> Users</button>
+                <button class="nav-item" data-view="categories"><i class="fas fa-layer-group"></i> Categories</button>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/index.html" class="nav-item"><i class="fas fa-arrow-left"></i> Back to store</a>
+                <button class="nav-item" id="admin-logout-btn"><i class="fas fa-right-from-bracket"></i> Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <main class="admin-main">
+            <header class="admin-topbar">
+                <button class="mobile-sidebar-toggle" id="mobile-sidebar-toggle"><i class="fas fa-bars"></i></button>
+                <h1 id="view-title">Dashboard</h1>
+                <div class="admin-user-chip">
+                    <span class="user-avatar" id="admin-avatar">A</span>
+                    <span id="admin-name-label">Admin</span>
+                </div>
+            </header>
+
+            <!-- Dashboard View -->
+            <section class="view" id="view-dashboard">
+                <div class="stat-cards" id="stat-cards"></div>
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-header"><h3>Revenue — last 7 days</h3></div>
+                        <div class="card-body"><canvas id="sales-chart" height="220"></canvas></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><h3>Orders by status</h3></div>
+                        <div class="card-body"><canvas id="status-chart" height="220"></canvas></div>
+                    </div>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-header"><h3>Recent orders</h3></div>
+                        <div class="card-body" id="recent-orders-list"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><h3>Low stock alerts</h3></div>
+                        <div class="card-body" id="low-stock-list"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Products View -->
+            <section class="view" id="view-products" style="display:none;">
+                <div class="view-toolbar">
+                    <div class="search-box"><i class="fas fa-search"></i><input type="text" id="product-search" placeholder="Search products..."></div>
+                    <button class="btn btn-primary" id="add-product-btn"><i class="fas fa-plus"></i> Add product</button>
+                </div>
+                <div class="card">
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead><tr><th></th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th></th></tr></thead>
+                            <tbody id="products-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="pagination" id="products-pagination"></div>
+            </section>
+
+            <!-- Orders View -->
+            <section class="view" id="view-orders" style="display:none;">
+                <div class="view-toolbar">
+                    <select id="order-status-filter">
+                        <option value="">All statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="card">
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
+                            <tbody id="orders-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="pagination" id="orders-pagination"></div>
+            </section>
+
+            <!-- Users View -->
+            <section class="view" id="view-users" style="display:none;">
+                <div class="card">
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Joined</th><th></th></tr></thead>
+                            <tbody id="users-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="pagination" id="users-pagination"></div>
+            </section>
+
+            <!-- Categories View -->
+            <section class="view" id="view-categories" style="display:none;">
+                <div class="view-toolbar">
+                    <div></div>
+                    <button class="btn btn-primary" id="add-category-btn"><i class="fas fa-plus"></i> Add category</button>
+                </div>
+                <div class="card">
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead><tr><th>Name</th><th>Description</th><th>Order</th><th>Status</th><th></th></tr></thead>
+                            <tbody id="categories-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('product-modal')">&times;</span>
+            <h2 id="product-modal-title">Add product</h2>
+            <form id="product-form">
+                <input type="hidden" id="product-id">
+                <label>Name</label>
+                <input type="text" id="product-name" required>
+                <label>Description</label>
+                <textarea id="product-description" rows="3" required></textarea>
+                <div class="form-row">
+                    <div><label>Price ($)</label><input type="number" id="product-price" min="0" step="0.01" required></div>
+                    <div><label>Sale price ($, optional)</label><input type="number" id="product-discount-price" min="0" step="0.01"></div>
+                </div>
+                <div class="form-row">
+                    <div><label>Stock</label><input type="number" id="product-stock" min="0" required></div>
+                    <div><label>Category</label><input type="text" id="product-category" list="category-options" required></div>
+                </div>
+                <datalist id="category-options"></datalist>
+                <label>Image URLs (comma-separated)</label>
+                <input type="text" id="product-images" placeholder="https://... , https://...">
+                <label>Tags (comma-separated)</label>
+                <input type="text" id="product-tags" placeholder="wireless, audio">
+                <div class="form-row checkboxes">
+                    <label class="checkbox-label"><input type="checkbox" id="product-active" checked> Active</label>
+                    <label class="checkbox-label"><input type="checkbox" id="product-featured"> Featured</label>
+                </div>
+                <button type="submit" class="auth-submit-btn">Save product</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div id="category-modal" class="modal">
+        <div class="modal-content modal-sm">
+            <span class="close" onclick="closeModal('category-modal')">&times;</span>
+            <h2 id="category-modal-title">Add category</h2>
+            <form id="category-form">
+                <input type="hidden" id="category-id">
+                <label>Name</label>
+                <input type="text" id="category-name" required>
+                <label>Description</label>
+                <textarea id="category-description" rows="2" required></textarea>
+                <label>Display order</label>
+                <input type="number" id="category-display-order" value="0">
+                <button type="submit" class="auth-submit-btn">Save category</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

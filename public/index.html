@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Duniya — Shop Smarter</title>
+    <meta name="description" content="Shopping Duniya — a modern shopping destination for electronics, fashion, home and more.">
+    <link rel="icon" type="image/jpeg" href="logo.jpeg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lexend:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Toast container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Header -->
+    <header class="header" id="site-header">
+        <div class="container header-inner">
+            <div class="nav-brand">
+                <button class="hamburger" id="hamburger-btn" aria-label="Open menu">
+                    <span></span><span></span><span></span>
+                </button>
+                <a href="#home" class="brand-link">
+                    <span class="brand-mark"><img src="logo.jpeg" alt="Shopping Duniya logo"></span>
+                    <span class="brand-name">Shopping Duniya</span>
+                </a>
+            </div>
+
+            <nav class="nav-menu" id="nav-menu">
+                <ul>
+                    <li><a href="#home" class="nav-link">Home</a></li>
+                    <li><a href="#products" class="nav-link">Shop</a></li>
+                    <li><a href="#categories" class="nav-link">Categories</a></li>
+                    <li><a href="#about" class="nav-link">About</a></li>
+                    <li id="admin-nav-link" class="nav-admin-link" style="display:none;"><a href="/admin.html" class="nav-link"><i class="fas fa-gauge"></i> Admin</a></li>
+                </ul>
+            </nav>
+
+            <div class="nav-actions">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="search-input" placeholder="Search products, brands...">
+                </div>
+
+                <button id="orders-btn" class="icon-btn" title="My Orders" style="display:none;">
+                    <i class="fas fa-receipt"></i>
+                </button>
+
+                <button id="cart-btn" class="icon-btn cart-btn" title="Cart">
+                    <i class="fas fa-cart-shopping"></i>
+                    <span id="cart-count" class="badge">0</span>
+                </button>
+
+                <div class="auth-buttons" id="auth-buttons">
+                    <button id="login-btn" class="btn btn-ghost">Log in</button>
+                    <button id="signup-btn" class="btn btn-primary">Sign up</button>
+                </div>
+
+                <div class="user-menu" id="user-menu" style="display:none;">
+                    <button id="user-btn" class="user-chip">
+                        <span class="user-avatar" id="user-avatar">U</span>
+                        <span class="user-name" id="user-name-label">Account</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="user-dropdown" id="user-dropdown">
+                        <button id="dropdown-orders-btn"><i class="fas fa-receipt"></i> My Orders</button>
+                        <button id="logout-btn"><i class="fas fa-right-from-bracket"></i> Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mobile-search">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="search-input-mobile" placeholder="Search products...">
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container hero-inner">
+            <div class="hero-content">
+                <span class="eyebrow"><i class="fas fa-sparkles"></i> New season drops are live</span>
+                <h1>Everything you love,<br>delivered <span class="text-gradient">beautifully</span>.</h1>
+                <p>Curated electronics, fashion, and home essentials — with fast shipping and prices that don't hurt.</p>
+                <div class="hero-actions">
+                    <button class="btn btn-primary btn-lg" onclick="scrollToProducts()">
+                        Shop the collection <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button class="btn btn-outline btn-lg" onclick="document.getElementById('categories').scrollIntoView({behavior:'smooth'})">
+                        Browse categories
+                    </button>
+                </div>
+                <div class="hero-stats">
+                    <div><strong id="stat-products">—</strong><span>Products</span></div>
+                    <div><strong>4.8<i class="fas fa-star"></i></strong><span>Avg. rating</span></div>
+                    <div><strong>24/7</strong><span>Support</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="categories" class="categories">
+        <div class="container">
+            <div class="section-heading">
+                <span class="eyebrow">Browse</span>
+                <h2>Shop by category</h2>
+            </div>
+            <div id="categories-grid" class="categories-grid">
+                <!-- Categories will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="products">
+        <div class="container">
+            <div class="products-header">
+                <div class="section-heading">
+                    <span class="eyebrow">Catalog</span>
+                    <h2>Featured products</h2>
+                </div>
+                <div class="filters">
+                    <select id="category-filter">
+                        <option value="">All Categories</option>
+                    </select>
+                    <select id="sort-filter">
+                        <option value="default">Sort: Newest</option>
+                        <option value="name">Name A–Z</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                    </select>
+                </div>
+            </div>
+            <div id="products-grid" class="products-grid">
+                <!-- Products will be loaded here -->
+            </div>
+            <div class="pagination">
+                <button id="prev-page" class="pagination-btn" disabled><i class="fas fa-chevron-left"></i> Prev</button>
+                <span id="page-info" class="page-info">Page 1 of 1</span>
+                <button id="next-page" class="pagination-btn" disabled>Next <i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Section -->
+    <section id="about" class="trust">
+        <div class="container trust-grid">
+            <div class="trust-item"><i class="fas fa-truck-fast"></i><h4>Fast delivery</h4><p>Get your orders in 2-4 business days.</p></div>
+            <div class="trust-item"><i class="fas fa-shield-halved"></i><h4>Secure checkout</h4><p>Your data is encrypted end-to-end.</p></div>
+            <div class="trust-item"><i class="fas fa-rotate-left"></i><h4>Easy returns</h4><p>30-day hassle-free return policy.</p></div>
+            <div class="trust-item"><i class="fas fa-headset"></i><h4>24/7 support</h4><p>We're always here to help you out.</p></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section footer-brand">
+                    <div class="brand-link"><span class="brand-mark"><img src="logo.jpeg" alt="Shopping Duniya logo"></span><span class="brand-name">Shopping Duniya</span></div>
+                    <p>Your trusted shopping destination for quality products at fair prices.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#products">Shop</a></li>
+                        <li><a href="#categories">Categories</a></li>
+                        <li><a href="#about">About</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Customer Service</h4>
+                    <ul>
+                        <li><a href="#" onclick="return false;">Contact Us</a></li>
+                        <li><a href="#" onclick="return false;">Returns</a></li>
+                        <li><a href="#" onclick="return false;">Shipping Info</a></li>
+                        <li><a href="#" onclick="return false;">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#" onclick="return false;"><i class="fab fa-facebook"></i></a>
+                        <a href="#" onclick="return false;"><i class="fab fa-twitter"></i></a>
+                        <a href="#" onclick="return false;"><i class="fab fa-instagram"></i></a>
+                        <a href="#" onclick="return false;"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Shopping Duniya. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content modal-sm">
+            <span class="close" onclick="closeModal('login-modal')">&times;</span>
+            <h2>Welcome back</h2>
+            <p class="modal-subtitle">Log in to continue shopping</p>
+            <form id="login-form">
+                <label>Email</label>
+                <input type="email" id="login-email" placeholder="you@example.com" required>
+                <label>Password</label>
+                <div class="password-field">
+                    <input type="password" id="login-password" placeholder="Enter your password" required>
+                    <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('login-password', this)" aria-label="Show password">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <button type="submit" class="auth-submit-btn">Log in</button>
+            </form>
+            <div class="auth-switch">
+                <p>Don't have an account? <a href="#" onclick="showRegisterModal(); return false;">Sign up</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="register-modal" class="modal">
+        <div class="modal-content modal-sm">
+            <span class="close" onclick="closeModal('register-modal')">&times;</span>
+            <h2>Create your account</h2>
+            <p class="modal-subtitle">It only takes a minute</p>
+            <form id="register-form">
+                <div class="form-row">
+                    <div>
+                        <label>First name</label>
+                        <input type="text" id="register-firstName" placeholder="John" required>
+                    </div>
+                    <div>
+                        <label>Last name</label>
+                        <input type="text" id="register-lastName" placeholder="Doe" required>
+                    </div>
+                </div>
+                <label>Email</label>
+                <input type="email" id="register-email" placeholder="you@example.com" required>
+                <label>Phone (optional)</label>
+                <input type="tel" id="register-phone" placeholder="Your phone number">
+                <label>Password</label>
+                <div class="password-field">
+                    <input type="password" id="register-password" placeholder="Create a password" required>
+                    <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('register-password', this)" aria-label="Show password">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <button type="submit" class="auth-submit-btn">Create account</button>
+            </form>
+            <div class="auth-switch">
+                <p>Already have an account? <a href="#" onclick="showLoginModal(); return false;">Log in</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('cart-modal')">&times;</span>
+            <h2><i class="fas fa-cart-shopping"></i> Your Cart</h2>
+            <div id="cart-items">
+                <!-- Cart items will be loaded here -->
+            </div>
+            <div class="cart-summary">
+                <div class="cart-total">
+                    <span>Total</span>
+                    <strong>$<span id="cart-total">0.00</span></strong>
+                </div>
+                <button id="checkout-btn" class="checkout-btn">Proceed to Checkout <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders Modal -->
+    <div id="orders-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('orders-modal')">&times;</span>
+            <h2><i class="fas fa-receipt"></i> My Orders</h2>
+            <div id="orders-list">
+                <!-- Orders will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content product-detail">
+            <span class="close" onclick="closeModal('product-modal')">&times;</span>
+            <div id="product-detail-content">
+                <!-- Product details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="modal">
+        <div class="modal-content modal-sm">
+            <span class="close" onclick="closeModal('checkout-modal')">&times;</span>
+            <h2>Checkout</h2>
+            <form id="checkout-form">
+                <h3 class="form-subheading">Shipping Address</h3>
+                <input type="text" id="checkout-address" placeholder="Street Address" required>
+                <div class="form-row">
+                    <input type="text" id="checkout-city" placeholder="City" required>
+                    <input type="text" id="checkout-state" placeholder="State" required>
+                </div>
+                <input type="text" id="checkout-zip" placeholder="ZIP Code" required>
+
+                <h3 class="form-subheading">Payment Method</h3>
+                <select id="checkout-payment" required>
+                    <option value="">Select Payment Method</option>
+                    <option value="credit-card">Credit Card</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="cash-on-delivery">Cash on Delivery</option>
+                </select>
+
+                <div class="checkout-summary">
+                    <span>Total to pay</span>
+                    <strong>$<span id="checkout-total">0.00</span></strong>
+                </div>
+
+                <button type="submit" class="auth-submit-btn">Place Order</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
