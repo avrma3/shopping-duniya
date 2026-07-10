@@ -147,7 +147,7 @@ async function setupMongoDB() {
         category: 'Electronics',
         images: [
           'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400&h=300&fit=crop',
-          'https://images.unsplash.com/photo-1484704849700-f032a568e944?w=400&h=300&fit=crop'
+          'https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?w=400&h=300&fit=crop'
         ],
         tags: ['earbuds', 'wireless', 'audio', 'music'],
         is_active: true,
@@ -177,7 +177,7 @@ async function setupMongoDB() {
         category: 'Electronics',
         images: [
           'https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=400&h=300&fit=crop',
-          'https://images.unsplash.com/photo-1579586337278-3f436f25d4d6?w=400&h=300&fit=crop'
+          'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=400&h=300&fit=crop'
         ],
         tags: ['smartwatch', 'fitness', 'health', 'wearable'],
         is_active: true,
@@ -192,7 +192,7 @@ async function setupMongoDB() {
         category: 'Home & Kitchen',
         images: [
           'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop',
-          'https://images.unsplash.com/photo-1574781330855-d0db393ee2c1?w=400&h=300&fit=crop'
+          'https://images.unsplash.com/photo-1544233726-9f1d2b27be8b?w=400&h=300&fit=crop'
         ],
         tags: ['kitchen', 'cooking', 'appliance', 'pressure cooker'],
         is_active: true,
