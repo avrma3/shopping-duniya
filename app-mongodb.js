@@ -30,8 +30,10 @@ mongoose.connect(MONGODB_URI, {
 })
 .then(() => console.log('Connected to MongoDB database'))
 .catch(err => {
+  // Don't exit the process here - on serverless platforms (e.g. Vercel) this
+  // function's process is reused across requests, and process.exit() would
+  // take down a warm instance instead of just failing the one request.
   console.error('MongoDB connection error:', err);
-  process.exit(1);
 });
 
 // Security middleware
@@ -895,7 +897,14 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`E-commerce server running on port ${PORT}`);
-  console.log(`Visit http://localhost:${PORT} to view the website`);
-});
+// Only start a listening server when run directly (e.g. `node app-mongodb.js`
+// or `npm start`). On Vercel this file is imported by api/index.js as a
+// serverless function handler instead, and must not call listen().
+if (require.main === module) {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`E-commerce server running on port ${PORT}`);
+    console.log(`Visit http://localhost:${PORT} to view the website`);
+  });
+}
+
+module.exports = app;
