@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
 const jwt = require('jsonwebtoken');
@@ -56,6 +57,7 @@ app.use(helmet({
     }
   }
 }));
+app.use(compression());
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -92,7 +94,7 @@ const authenticateToken = (req, res, next) => {
 // take effect immediately without waiting for the user to re-login
 const requireAdmin = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.userId);
+    const user = await User.findById(req.user.userId).lean();
     if (!user || user.role !== 'admin') {
       return res.status(403).json({ error: 'Admin access required' });
     }
@@ -125,7 +127,7 @@ app.post('/api/auth/register', async (req, res) => {
     const { email, password, firstName, lastName, phone } = req.body;
     
     // Check if user exists
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email }).lean();
     if (existingUser) {
       return res.status(400).json({ error: 'User already exists' });
     }
@@ -173,7 +175,7 @@ app.post('/api/auth/login', async (req, res) => {
     const { email, password } = req.body;
 
     // Find user
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).lean();
     if (!user) {
       return res.status(400).json({ error: 'Invalid credentials' });
     }
@@ -230,7 +232,8 @@ app.get('/api/products', async (req, res) => {
       Product.find(query)
         .sort({ createdAt: -1 })
         .limit(parseInt(limit))
-        .skip(skip),
+        .skip(skip)
+        .lean(),
       Product.countDocuments(query)
     ]);
 
@@ -248,6 +251,9 @@ app.get('/api/products', async (req, res) => {
       createdAt: product.createdAt
     }));
 
+    // Public catalog data changes rarely (only via admin); let browsers/CDN
+    // cache it briefly instead of hitting the function on every page load.
+    res.set('Cache-Control', 'public, max-age=30, stale-while-revalidate=300');
     res.json({
       products: formattedProducts,
       totalProducts,
@@ -262,11 +268,12 @@ app.get('/api/products', async (req, res) => {
 
 app.get('/api/products/:id', async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id).lean();
     if (!product || !product.is_active) {
       return res.status(404).json({ error: 'Product not found' });
     }
 
+    res.set('Cache-Control', 'public, max-age=30, stale-while-revalidate=300');
     res.json({
       id: product._id,
       name: product.name,
@@ -289,8 +296,8 @@ app.get('/api/products/:id', async (req, res) => {
 // Category routes
 app.get('/api/categories', async (req, res) => {
   try {
-    const categories = await Category.find({ is_active: true }).sort({ display_order: 1, name: 1 });
-    
+    const categories = await Category.find({ is_active: true }).sort({ display_order: 1, name: 1 }).lean();
+
     const formattedCategories = categories.map(category => ({
       id: category._id,
       name: category.name,
@@ -303,6 +310,8 @@ app.get('/api/categories', async (req, res) => {
       updated_at: category.updatedAt
     }));
 
+    res.set('Cache-Control', 'public, max-age=30, stale-while-revalidate=300');
+
     res.json(formattedCategories);
   } catch (error) {
     console.error('Categories error:', error);
@@ -313,8 +322,8 @@ app.get('/api/categories', async (req, res) => {
 // Cart routes
 app.get('/api/cart', authenticateToken, async (req, res) => {
   try {
-    const cart = await Cart.findOne({ user_id: req.user.userId }).populate('items.productId');
-    
+    const cart = await Cart.findOne({ user_id: req.user.userId }).populate('items.productId').lean();
+
     if (!cart) {
       return res.json([]);
     }
@@ -348,7 +357,7 @@ app.post('/api/cart', authenticateToken, async (req, res) => {
       const { productId, quantity = 1 } = req.body;
 
       // Check if product exists
-      const product = await Product.findById(productId);
+      const product = await Product.findById(productId).lean();
       if (!product || !product.is_active) {
         return res.status(404).json({ error: 'Product not found' });
       }
@@ -470,7 +479,7 @@ app.post('/api/orders', authenticateToken, async (req, res) => {
       const { shippingAddress, paymentMethod } = req.body;
 
       // Get cart items
-      const cart = await Cart.findOne({ user_id: req.user.userId }).populate('items.productId');
+      const cart = await Cart.findOne({ user_id: req.user.userId }).populate('items.productId').lean();
       if (!cart || cart.items.length === 0) {
         return res.status(400).json({ error: 'Cart is empty' });
       }
@@ -527,7 +536,8 @@ app.get('/api/orders', authenticateToken, async (req, res) => {
   try {
     const orders = await Order.find({ user_id: req.user.userId })
       .populate('items.product_id')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
     const formattedOrders = orders.map(order => ({
       id: order._id,
@@ -563,7 +573,7 @@ app.get('/api/admin/stats', authenticateToken, requireAdmin, async (req, res) =>
       User.countDocuments({}),
       Product.countDocuments({}),
       Order.countDocuments({}),
-      Order.find({}).sort({ createdAt: -1 })
+      Order.find({}).sort({ createdAt: -1 }).lean()
     ]);
 
     const totalRevenue = allOrders
@@ -596,12 +606,14 @@ app.get('/api/admin/stats', authenticateToken, requireAdmin, async (req, res) =>
     const recentOrders = await Order.find({})
       .populate('user_id', 'name email')
       .sort({ createdAt: -1 })
-      .limit(8);
+      .limit(8)
+      .lean();
 
     const lowStockProducts = await Product.find({ is_active: true, stock: { $lte: 10 } })
       .sort({ stock: 1 })
       .limit(5)
-      .select('name stock');
+      .select('name stock')
+      .lean();
 
     res.json({
       totalUsers,
@@ -637,7 +649,7 @@ app.get('/api/admin/products', authenticateToken, requireAdmin, async (req, res)
 
     const skip = (page - 1) * limit;
     const [productsList, totalProducts] = await Promise.all([
-      Product.find(query).sort({ createdAt: -1 }).skip(skip).limit(parseInt(limit)),
+      Product.find(query).sort({ createdAt: -1 }).skip(skip).limit(parseInt(limit)).lean(),
       Product.countDocuments(query)
     ]);
 
@@ -739,7 +751,8 @@ app.get('/api/admin/orders', authenticateToken, requireAdmin, async (req, res) =
         .populate('items.product_id', 'name images')
         .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(parseInt(limit)),
+        .limit(parseInt(limit))
+        .lean(),
       Order.countDocuments(query)
     ]);
 
@@ -797,7 +810,7 @@ app.get('/api/admin/users', authenticateToken, requireAdmin, async (req, res) =>
     const skip = (page - 1) * limit;
 
     const [users, totalUsers] = await Promise.all([
-      User.find({}).select('-password_hash').sort({ createdAt: -1 }).skip(skip).limit(parseInt(limit)),
+      User.find({}).select('-password_hash').sort({ createdAt: -1 }).skip(skip).limit(parseInt(limit)).lean(),
       User.countDocuments({})
     ]);
 
@@ -839,7 +852,7 @@ app.put('/api/admin/users/:id/role', authenticateToken, requireAdmin, async (req
 // Admin: list all categories (including inactive)
 app.get('/api/admin/categories', authenticateToken, requireAdmin, async (req, res) => {
   try {
-    const categories = await Category.find({}).sort({ display_order: 1, name: 1 });
+    const categories = await Category.find({}).sort({ display_order: 1, name: 1 }).lean();
     res.json(categories);
   } catch (error) {
     console.error('Admin categories list error:', error);
