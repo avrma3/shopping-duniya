@@ -27,6 +27,12 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ecomme
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  // Mongoose's default pool is 100 connections *per instance*. On a serverless
+  // platform (Vercel), a burst of concurrent requests can spin up many
+  // parallel function instances at once, each opening their own pool - easily
+  // exhausting a shared Atlas cluster's connection limit. Cap it low; each
+  // instance only ever serves a handful of concurrent requests anyway.
+  maxPoolSize: 10,
 })
 .then(() => console.log('Connected to MongoDB database'))
 .catch(err => {
