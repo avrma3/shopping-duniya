@@ -224,7 +224,7 @@ async function setupMongoDB() {
         stock: 25,
         category: 'Accessories',
         images: [
-          'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&h=300&fit=crop',
+          'https://images.unsplash.com/photo-1577733966973-d680bffd2e80?w=400&h=300&fit=crop',
           'https://images.unsplash.com/photo-1491637639811-60e2756cc1c7?w=400&h=300&fit=crop'
         ],
         tags: ['accessories', 'travel', 'laptop'],
@@ -239,7 +239,7 @@ async function setupMongoDB() {
         category: 'Sports',
         images: [
           'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=300&fit=crop',
-          'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=300&fit=crop'
+          'https://images.unsplash.com/photo-1539185441755-769473a23570?w=400&h=300&fit=crop'
         ],
         tags: ['sports', 'footwear', 'running'],
         is_active: true
@@ -256,6 +256,34 @@ async function setupMongoDB() {
           'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=400&h=300&fit=crop'
         ],
         tags: ['kitchen', 'appliances', 'coffee'],
+        is_active: true
+      },
+      {
+        name: "Men's Cotton T-Shirt",
+        description: 'Classic crew-neck t-shirt made from soft, breathable cotton',
+        price: 24.99,
+        discount_price: 19.99,
+        stock: 100,
+        category: 'Fashion',
+        images: [
+          'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=300&fit=crop',
+          'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=400&h=300&fit=crop'
+        ],
+        tags: ['fashion', 'men', 't-shirt', 'clothing'],
+        is_active: true
+      },
+      {
+        name: "Women's Casual Shirt",
+        description: 'Lightweight chambray shirt with a relaxed, everyday fit',
+        price: 44.99,
+        discount_price: 34.99,
+        stock: 70,
+        category: 'Fashion',
+        images: [
+          'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400&h=300&fit=crop',
+          'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop'
+        ],
+        tags: ['fashion', 'women', 'shirt', 'clothing'],
         is_active: true
       }
     ];
