@@ -209,7 +209,10 @@ async function setupMongoDB() {
         discount_price: 149.99,
         stock: 50,
         category: 'Electronics',
-        images: ['./images/headphones-1.jpg', './images/headphones-2.jpg'],
+        images: [
+          'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400&h=300&fit=crop',
+          'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=400&h=300&fit=crop'
+        ],
         tags: ['electronics', 'audio', 'wireless'],
         is_active: true
       },
@@ -220,7 +223,10 @@ async function setupMongoDB() {
         discount_price: 59.99,
         stock: 25,
         category: 'Accessories',
-        images: ['./images/backpack-1.jpg', './images/backpack-2.jpg'],
+        images: [
+          'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&h=300&fit=crop',
+          'https://images.unsplash.com/photo-1491637639811-60e2756cc1c7?w=400&h=300&fit=crop'
+        ],
         tags: ['accessories', 'travel', 'laptop'],
         is_active: true
       },
@@ -231,7 +237,10 @@ async function setupMongoDB() {
         discount_price: 99.99,
         stock: 60,
         category: 'Sports',
-        images: ['./images/shoes-1.jpg', './images/shoes-2.jpg'],
+        images: [
+          'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=300&fit=crop',
+          'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=300&fit=crop'
+        ],
         tags: ['sports', 'footwear', 'running'],
         is_active: true
       },
@@ -242,7 +251,10 @@ async function setupMongoDB() {
         discount_price: 119.99,
         stock: 20,
         category: 'Home & Kitchen',
-        images: ['./images/coffee-maker-1.jpg', './images/coffee-maker-2.jpg'],
+        images: [
+          'https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?w=400&h=300&fit=crop',
+          'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=400&h=300&fit=crop'
+        ],
         tags: ['kitchen', 'appliances', 'coffee'],
         is_active: true
       }
